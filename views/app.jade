@@ -1,0 +1,12 @@
+html
+  body
+    script.
+      (function () {
+        var user = JSON.parse(localStorage.getItem("user"));
+        if (!user) {
+            location.href = '/';
+            return;
+        }
+        document.body.innerHTML = user.accessToken;
+      })();
+    a(href="javascript:(function () {localStorage.removeItem('user');location.reload();})()") Logout

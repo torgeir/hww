@@ -1,0 +1,7 @@
+html
+  body
+    script.
+      (function () {
+        localStorage.setItem("user", JSON.stringify(!{JSON.stringify(user)}));
+        location.href = "/app";
+      })();

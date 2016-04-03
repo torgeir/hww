@@ -1,0 +1,26 @@
+{
+  "name": "hww",
+  "version": "1.0.0",
+  "description": "holsen webjorns wedding",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/torgeir/hww.git"
+  },
+  "keywords": [],
+  "author": "GitHub",
+  "license": "mit",
+  "devDependencies": {
+    "electron-prebuilt": "^0.36.0"
+  },
+  "dependencies": {
+    "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "jade": "^1.11.0",
+    "passport": "^0.3.2",
+    "passport-instagram": "^1.0.0"
+  }
+}
