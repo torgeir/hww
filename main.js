@@ -6,8 +6,15 @@ const BrowserWindow = electron.BrowserWindow;
 
 let mainWindow;
 function createWindow () {
-  mainWindow = new BrowserWindow({ width: 800, height: 600 });
-  mainWindow.loadURL('http://localhost:3000');
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true,
+      webSecurity: false
+    }
+  });
+  mainWindow.loadURL('http://localhost:3001');
   mainWindow.webContents.openDevTools();
   mainWindow.on('closed', function () {
     mainWindow = null;
@@ -26,58 +33,17 @@ app.on('activate', function () {
 });
 
 
-const passport = require('passport');
-const InstagramStrategy = require('passport-instagram');
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-passport.deserializeUser(function(obj, done) {
-  done(null, obj);
-});
-passport.use(new InstagramStrategy({
-    clientID: "",
-    clientSecret: "",
-    callbackURL: "http://localhost:3000/auth/instagram/callback",
-    scope: 'public_content'
-  },
-  function(accessToken, refreshToken, profile, done) {
-    done(null, {
-      accessToken: accessToken,
-      username: profile.username
-    });
-  }
-));
-
 const express = require('express');
 const expressSession = require('express-session');
 
 const router = express.Router();
-router.get('/', function (req, res) {
-  res.render("index");
-});
-router.get('/install', function (req, res) {
-  if (req.user) {
-    return res.render("install", {
-      user: req.user
-    });
-  }
-  res.redirect("/");
-})
-router.get('/app', function (req, res) {
-  return res.render("app");
-});
-
-const instaAuth = passport.authenticate('instagram', { failureRedirect: '/' });
-router.get('/auth/instagram', passport.authenticate('instagram'));
-router.get('/auth/instagram/callback', instaAuth, function (req, res) {
-  res.redirect('/install');
-});
+// router.get('/', function (req, res) {
+//   return res.sendFile(__dirname + "/dist/index.html");
+// });
 
 const web = express();
 web.set('views', __dirname + "/views");
 web.set('view engine', 'jade');
 web.use(expressSession({ resave: false, saveUninitialized: false, secret: 'holsbjornswedding' }));
-web.use(passport.initialize());
-web.use(passport.session());
 web.use('/', router);
 web.listen(3000);

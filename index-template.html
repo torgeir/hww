@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+    <title><%- htmlWebpackPlugin.options.title %></title>
+    <style>
+      html, body, .app-root {
+        height: 100%;
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-root"></div>
+    <script>
+      // wtf? https://github.com/electron/electron/issues/254#issuecomment-186922315
+      require('electron').remote.process.mainModule.paths.forEach(function(path) {
+        require('module').globalPaths.push(path);
+      });
+
+      nodeRequire = global.require;
+      delete global.require;
+    </script>
+  </body>
+</html>
