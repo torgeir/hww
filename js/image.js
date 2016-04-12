@@ -1,14 +1,16 @@
 import style from './style';
 
-const Image = ({ src }) => {
+const Image = (props) => {
 
   const s =
-    style.block(
-    style.center(
-    style.maxWidth(
-    style.maxHeight())));
+    Object.assign({},
+      style.block(
+      style.center(
+      style.maxWidth(
+      style.maxHeight()))),
+      props.style);
 
-  return <img src={ src } style={ s } />;
+  return <img src={ props.src } style={ s } />;
 };
 
 export default Image;

@@ -7,7 +7,7 @@ const timer = () => {
     delete timers[key];
   };
 
-  return (effects, throttled) => {
+  return (effects) => {
     const previousTimerKeys = Object.keys(timers);
     const newTimerKeys = effects.timer.map(timer => timer.key);
     const staleTimerKeys = previousTimerKeys.filter(key => newTimerKeys.indexOf(key) == -1);
@@ -18,13 +18,7 @@ const timer = () => {
       if (isNewTimer) {
         (function loop() {
           if (typeof time == 'number' && typeof onTick == 'function') {
-            const isFirstOnTick = !timers[key];
-            if (isFirstOnTick) {
-                throttled(() => onTick());
-            }
-            else {
-              onTick();
-            }
+            setTimeout(onTick, 0);
             timers[key] = setTimeout(loop, time * 1000);
           }
         })();

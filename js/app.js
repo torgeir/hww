@@ -14,14 +14,16 @@ const {
   RESET,
   FILES_ADDED,
   SETTINGS_ACTION,
-  TOGGLE_SETTINGS
+  TOGGLE_SETTINGS,
+  SWITCH_VIEW
 } = require('./actions');
 
 const initialState = fromJS({
   images: [],
   currentImage: null,
   paused: false,
-  settings: Settings.update()
+  settings: Settings.update(),
+  showInstagram: false
 });
 
 const update = (state = initialState, action) => {
@@ -29,6 +31,9 @@ const update = (state = initialState, action) => {
 
   case INIT:
     return state;
+
+  case SWITCH_VIEW:
+    return state.update('showInstagram', showInstagram => !showInstagram);
 
   case FILES_ADDED:
     return state.update('images', (images) => images.concat(action.files));
@@ -73,7 +78,11 @@ const declare = (dispatch, state) => {
   const paused = state.get('paused');
   const images = state.get('images');
   const src = images.get(state.get('currentImage'));
+
+  const showInstagram = state.get('showInstagram');
+
   const settings = state.get('settings');
+  const hashtag = settings.get('hashtag');
 
   const settingsDispatch = (type, data) => dispatch(SETTINGS_ACTION, { action: { type, ...data } });
   const settingsEffects = settings.get('visible')
@@ -91,6 +100,23 @@ const declare = (dispatch, state) => {
 
   const onPlayPause = () => dispatch(paused ? PLAY : PAUSE);
 
+
+  const nextImageTimer = {
+    key: 'next-image-timer',
+    time: 2,
+    onTick: function () {
+      dispatch(NEXT);
+    }
+  };
+
+  const switchViewTimer = {
+    key: 'change-view-timer',
+    time: 6,
+    onTick: function () {
+      dispatch(SWITCH_VIEW);
+    }
+  };
+
   return {
 
     view: function () {
@@ -106,30 +132,33 @@ const declare = (dispatch, state) => {
         style.height('100%',
         style.backgroundColor("#333"));
 
+      const iframeStyles = {
+        border: 0,
+        width: '100%',
+        height: '100%',
+        display: showInstagram ? 'block' : 'none'
+      };
+
+      const imageStyles = {
+        display: showInstagram ? 'none' : 'block'
+      };
+
       return <div style={ s }>
         { settingsPanel }
         <button onClick={ onPlayPause }>
           play/pause
         </button>
-        <Image src={ src } />
+        <iframe style={ iframeStyles } src={ `http://swanscreen.com/show.php?tag=${hashtag.replace('#', '')}` } />;
+        <Image style={ imageStyles } src={ src } />
       </div>;
     },
 
-    timer: (paused || images.count() == 0)
+    timer:
+      (paused || images.count() == 0)
       ? []
-      : [{
-          key: 'next-image-timer',
-          time: 2,
-          onTick: function () {
-            dispatch(NEXT);
-          }
-         }, {
-          key: 'change-view-timer',
-          time: 6,
-          onTick: function () {
-            console.log('every 6');
-          }
-         }],
+      : (showInstagram)
+        ? [switchViewTimer]
+        : [nextImageTimer, switchViewTimer],
 
     watch: settings.get('folder') == null
       ? {}

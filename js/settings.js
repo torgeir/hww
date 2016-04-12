@@ -10,7 +10,8 @@ const initialState = fromJS({
   speed: 2000,
   visible: false,
   folderText: '/Users/torgeir/Desktop/hww-bilder',
-  folder: '/Users/torgeir/Desktop/hww-bilder'
+  folder: '/Users/torgeir/Desktop/hww-bilder',
+  hashtag: '#hessdalen'
 });
 
 const update = (state = initialState, action = {}) => {
