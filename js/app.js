@@ -116,13 +116,20 @@ const declare = (dispatch, state) => {
     },
 
     timer: (paused || images.count() == 0)
-      ? {}
-      : {
-        time: 2,
-        onTick: function () {
-          dispatch(NEXT);
-        }
-      },
+      ? []
+      : [{
+          key: 'next-image-timer',
+          time: 2,
+          onTick: function () {
+            dispatch(NEXT);
+          }
+         }, {
+          key: 'change-view-timer',
+          time: 6,
+          onTick: function () {
+            console.log('every 6');
+          }
+         }],
 
     watch: settings.get('folder') == null
       ? {}
