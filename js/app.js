@@ -68,20 +68,16 @@ const update = (state = initialState, action) => {
   }
 };
 
-const select = (state) => ({
-  images: state.get('images'),
-  src: state.get('images').get(state.get('currentImage')),
-  paused: state.get('paused'),
-  settings: state.get('settings')
-});
-
 const declare = (dispatch, state) => {
 
-  const { images, src, paused, settings } = state;
+  const paused = state.get('paused');
+  const images = state.get('images');
+  const src = images.get(state.get('currentImage'));
+  const settings = state.get('settings');
 
   const settingsDispatch = (type, data) => dispatch(SETTINGS_ACTION, { action: { type, ...data } });
   const settingsEffects = settings.get('visible')
-          ? Settings.declare(settingsDispatch, Settings.select(settings))
+          ? Settings.declare(settingsDispatch, settings)
           : null;
 
   const onShowSettings = () => dispatch(SETTINGS_ACTION, { action: { type: TOGGLE_SETTINGS } });
@@ -145,4 +141,4 @@ const declare = (dispatch, state) => {
       }
   };
 };
-export default { select, update, declare };
+export default { update, declare };

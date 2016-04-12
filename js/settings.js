@@ -13,13 +13,6 @@ const initialState = fromJS({
   folder: null
 });
 
-const select = (state) => ({
-  visible: state.get('visible'),
-  speed: state.get('speed'),
-  folderText: state.get('folderText'),
-  folder: state.get('folder')
-});
-
 const update = (state = initialState, action = {}) => {
   switch (action.type) {
 
@@ -37,7 +30,12 @@ const update = (state = initialState, action = {}) => {
   }
 };
 
-const declare = (dispatch, { folderText }) => {
+const declare = (dispatch, state) => {
+
+  const visible = state.get('visible');
+  const speed = state.get('speed');
+  const folderText = state.get('folderText');
+  const folder = state.get('folder');
 
   const updateFolderText = ({ target: { value } }) => dispatch(SET_FOLDER_TEXT, { folder: value });
 
@@ -58,4 +56,4 @@ const declare = (dispatch, { folderText }) => {
   return { view };
 };
 
-export default { select, update, declare };
+export default { update, declare };
