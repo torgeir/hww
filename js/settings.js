@@ -9,8 +9,8 @@ const {
 const initialState = fromJS({
   speed: 2000,
   visible: false,
-  folderText: '',
-  folder: null
+  folderText: '/Users/torgeir/Desktop/hww-bilder',
+  folder: '/Users/torgeir/Desktop/hww-bilder'
 });
 
 const update = (state = initialState, action = {}) => {
