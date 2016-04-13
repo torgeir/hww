@@ -74,32 +74,16 @@ const update = (state = initialState, action) => {
 };
 
 const declare = (dispatch, state) => {
-
+  const showInstagram = state.get('showInstagram');
   const paused = state.get('paused');
+
   const images = state.get('images');
   const src = images.get(state.get('currentImage'));
 
-  const showInstagram = state.get('showInstagram');
-
   const settings = state.get('settings');
-  const hashtag = settings.get('hashtag');
-
-  const settingsDispatch = (type, data) => dispatch(SETTINGS_ACTION, { action: { type, ...data } });
-  const settingsEffects = settings.get('visible')
-          ? Settings.declare(settingsDispatch, settings)
-          : null;
-
-  const onShowSettings = () => dispatch(SETTINGS_ACTION, { action: { type: TOGGLE_SETTINGS } });
-
-  const settingsPanel = <div>
-    { settingsEffects && settingsEffects.view }
-    <button onClick={ onShowSettings }>
-      show settings
-    </button>
-  </div>;
+  const folder = settings.getIn(['folder', 'text']);
 
   const onPlayPause = () => dispatch(paused ? PLAY : PAUSE);
-
 
   const nextImageTimer = {
     key: 'next-image-timer',
@@ -116,6 +100,20 @@ const declare = (dispatch, state) => {
       dispatch(SWITCH_VIEW);
     }
   };
+
+  const settingsDispatch = (type, data) => dispatch(SETTINGS_ACTION, { action: { type, ...data } });
+  const settingsEffects = settings.get('visible')
+          ? Settings.declare(settingsDispatch, settings)
+          : null;
+
+  const onShowSettings = () => dispatch(SETTINGS_ACTION, { action: { type: TOGGLE_SETTINGS } });
+
+  const settingsPanel = <div>
+    { settingsEffects && settingsEffects.view }
+    <button onClick={ onShowSettings }>
+      show settings
+    </button>
+  </div>;
 
   return {
 
@@ -143,12 +141,15 @@ const declare = (dispatch, state) => {
         display: showInstagram ? 'none' : 'block'
       };
 
+      const hashtag = settings.getIn(['hashtag', 'text']).replace('#', '');
+
       return <div style={ s }>
+        { state.getIn(['settings', 'hashtag', 'text']) }
         { settingsPanel }
         <button onClick={ onPlayPause }>
           play/pause
         </button>
-        <iframe style={ iframeStyles } src={ `http://swanscreen.com/show.php?tag=${hashtag.replace('#', '')}` } />;
+        <iframe style={ iframeStyles } src={ `http://swanscreen.com/show.php?tag=${hashtag}` } />;
         <Image style={ imageStyles } src={ src } />
       </div>;
     },
@@ -160,10 +161,10 @@ const declare = (dispatch, state) => {
         ? [switchViewTimer]
         : [nextImageTimer, switchViewTimer],
 
-    watch: settings.get('folder') == null
+    watch: folder == null
       ? {}
       : {
-        folder: settings.get('folder'),
+        folder: folder,
         onReset: () => {
           dispatch(RESET);
         },

@@ -1,17 +1,18 @@
 import { fromJS } from 'immutable';
 
+import { field, updateField } from './fields';
+
 const {
   TOGGLE_SETTINGS,
-  SET_FOLDER,
-  SET_FOLDER_TEXT
+  FIELD_SAVE,
+  FIELD_CHANGE
 } = require('./actions');
 
 const initialState = fromJS({
   speed: 2000,
   visible: false,
-  folderText: '/Users/torgeir/Desktop/hww-bilder',
-  folder: '/Users/torgeir/Desktop/hww-bilder',
-  hashtag: '#hessdalen'
+  folder: field('/Users/torgeir/Desktop/hww-bilder'),
+  hashtag: field('#hessdalen')
 });
 
 const update = (state = initialState, action = {}) => {
@@ -20,11 +21,9 @@ const update = (state = initialState, action = {}) => {
   case TOGGLE_SETTINGS:
     return state.update('visible', visible => !visible);
 
-  case SET_FOLDER:
-    return state.set('folder', state.get('folderText'));
-
-  case SET_FOLDER_TEXT:
-    return state.set('folderText', action.folder);
+  case FIELD_CHANGE:
+  case FIELD_SAVE:
+    return state.update(action.field, fieldState => updateField(fieldState, action));
 
   default:
     return state;
@@ -33,25 +32,22 @@ const update = (state = initialState, action = {}) => {
 
 const declare = (dispatch, state) => {
 
-  const visible = state.get('visible');
-  const speed = state.get('speed');
-  const folderText = state.get('folderText');
-  const folder = state.get('folder');
-
-  const updateFolderText = ({ target: { value } }) => dispatch(SET_FOLDER_TEXT, { folder: value });
-
-  const setFolder = () => {
-    dispatch(SET_FOLDER);
+  const updateField = (field) => ({ target: { value } }) => dispatch(FIELD_CHANGE, { field, value });
+  const saveField = (...fields) => () => {
+    fields.map(field => dispatch(FIELD_SAVE, { field }));
     dispatch(TOGGLE_SETTINGS);
   };
 
   const view = <div>
     <input placeholder="Image folder"
-           value={ folderText }
-           onChange={ updateFolderText } />
-    <button onClick={ setFolder }>
-      ok
-    </button>
+           value={ state.getIn(['folder', 'value']) }
+           onChange={ updateField('folder') } />
+
+    <input placeholder="Hashtag"
+           value={ state.getIn(['hashtag', 'value']) }
+           onChange={ updateField('hashtag') } />
+
+    <button onClick={ saveField('folder', 'hashtag') }>Ok</button>
   </div>;
 
   return { view };

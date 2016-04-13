@@ -1,6 +1,5 @@
 const actions = [
   'INIT',
-  'INC',
   'PLAY',
   'PAUSE',
   'NEXT',
@@ -9,9 +8,10 @@ const actions = [
   'FILES_ADDED',
   'TOGGLE_SETTINGS',
   'SETTINGS_ACTION',
-  'SET_FOLDER_TEXT',
-  'SET_FOLDER',
-  'SWITCH_VIEW'
+  'SWITCH_VIEW',
+  'FIELD_SAVE',
+  'FIELD_CHANGE'
+
 ].reduce(function (actions, type) {
   actions[type] = Symbol.for(type);
   return actions;
