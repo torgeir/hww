@@ -47,17 +47,16 @@ const watch = () => {
 
         triggerOnChange(files.map(prefixFolder));
 
-
-        /* try { */
-        /* watcher = fs.watch(folder, bufferCallsFor(1000, function (event, filenames) { */
-        /* if (event == 'rename') { */
-        /* triggerOnChange(filenames.map(prefixFolder)); */
-        /* } */
-        /* })); */
-        /* } */
-        /* catch (e) { */
-        /* console.warn(e); // eslint-disable-line */
-        /* } */
+        try {
+          watcher = fs.watch(folder, bufferCallsFor(1000, function (event, filenames) {
+            if (event == 'rename') {
+              triggerOnChange(filenames.map(prefixFolder));
+            }
+          }));
+        }
+        catch (e) {
+          console.warn(e); // eslint-disable-line
+        }
       });
     }
   };
