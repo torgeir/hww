@@ -18,7 +18,7 @@ const timer = () => {
       if (isNewTimer) {
         (function loop() {
           if (typeof time == 'number' && typeof onTick == 'function') {
-            setTimeout(onTick, 0);
+            setTimeout(onTick, time * 1000);
             timers[key] = setTimeout(loop, time * 1000);
           }
         })();
