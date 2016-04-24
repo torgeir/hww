@@ -1,17 +1,19 @@
 const actions = [
   'INIT',
+
   'PLAY',
   'PAUSE',
-  'NEXT',
-  'PREV',
+  'RAND',
+  'SHOW_INSTA',
+
   'RESET',
   'FILES_ADDED',
+
   'TOGGLE_SETTINGS',
   'SETTINGS_ACTION',
-  'SWITCH_VIEW',
   'FIELD_SAVE',
-  'FIELD_CHANGE'
-
+  'FIELD_CHANGE',
+  'FIELD_RESET'
 ].reduce(function (actions, type) {
   actions[type] = Symbol.for(type);
   return actions;

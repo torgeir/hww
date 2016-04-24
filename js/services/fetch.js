@@ -1,9 +1,9 @@
 
-const fetch = () => {
+const fetch = function () {
 
   let pending = [];
 
-  return ({ http = [] }) => {
+  return function ({ http = [] }) {
 
     const staleHttpRequests = Object.keys(pending)
       .map(key => pending[key])
@@ -14,17 +14,17 @@ const fetch = () => {
 
     const newRequests = http.filter((req) => !(req.key in pending));
 
-    pending = http.reduce((acc, req) => {
+    pending = http.reduce(function (acc, req) {
       acc[req.key] = req;
       return acc;
     }, {});
 
-    newRequests.forEach((req) => {
+    newRequests.forEach(function (req) {
       const { key } = req;
 
       const stillPending = () => key in pending;
 
-      setTimeout(() => {
+      setTimeout(function () {
         const success = true;
         if (success) {
           if (!stillPending()) {

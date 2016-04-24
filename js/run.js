@@ -3,7 +3,7 @@ const { INIT } = require('./actions');
 export default function run (Component, services = []) {
 
   let isThrottled = false;
-  const throttled = (fn) => {
+  const throttled = function (fn) {
     isThrottled = true;
     fn();
     isThrottled = false;
@@ -11,8 +11,7 @@ export default function run (Component, services = []) {
 
   let state;
 
-  const dispatch = (type, data) => {
-    console.log('dispatching', type);
+  const dispatch = function (type, data) {
     state = window.state = Component.update(state, { type, ...data });
     if (!isThrottled) {
       const effects = Component.declare(dispatch, state);

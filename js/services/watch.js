@@ -2,11 +2,11 @@ const fs = nodeRequire('fs'); // eslint-disable-line
 
 const isImage = (path) => new RegExp(".*\.(jpg|JPG|png|PNG|gif|GIF)$").test(path);
 
-const watch = () => {
+const watch = function () {
 
   let watchingFolder = null, watcher, onChange, onReset;
 
-  return ({ watch }, throttled) => {
+  return function ({ watch }, throttled) {
 
     onChange = watch.onChange;
     onReset = watch.onReset;
@@ -14,7 +14,7 @@ const watch = () => {
     const { folder } = watch;
 
     if (!folder) {
-      console.log('no folder set');
+      console.log('no folder set'); // eslint-disable-line
     }
 
     const isFirstTime = (watchingFolder == null && folder != null);
@@ -33,7 +33,7 @@ const watch = () => {
 
       const prefixFolder = (filename) => `${folder}/${filename}`;
 
-      const triggerOnChange = (files) => {
+      const triggerOnChange = function (files) {
         const images = files.filter(isImage);
         const localImages = images.map(image => `file://${image}`);
         onChange(localImages);
@@ -64,7 +64,7 @@ const watch = () => {
 
 export default watch;
 
-function bufferCallsFor(ms, fn) { // eslint-disable-line
+function bufferCallsFor (ms, fn) { // eslint-disable-line
   let timeout;
   let buffer;
   return function (event, filename) {
@@ -78,7 +78,7 @@ function bufferCallsFor(ms, fn) { // eslint-disable-line
       buffer = [filename];
     }
 
-    timeout = setTimeout(() => {
+    timeout = setTimeout(function () {
       timeout = null;
       fn(event, buffer);
     }, ms);

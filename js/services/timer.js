@@ -1,27 +1,27 @@
 const timer = () => {
 
-  const timers = {};
+  const currentTimers = {};
 
-  const removeTimer = (key) => {
-    clearTimeout(timers[key]);
-    delete timers[key];
+  const removeTimer = function (key) {
+    clearTimeout(currentTimers[key]);
+    delete currentTimers[key];
   };
 
-  return (effects) => {
-    const previousTimerKeys = Object.keys(timers);
-    const newTimerKeys = effects.timer.map(timer => timer.key);
+  return function ({ timer = [] }) {
+    const previousTimerKeys = Object.keys(currentTimers);
+    const newTimerKeys = timer.map(t => t.key);
     const staleTimerKeys = previousTimerKeys.filter(key => newTimerKeys.indexOf(key) == -1);
-    staleTimerKeys.forEach(key => removeTimer(key));
+    staleTimerKeys.forEach(removeTimer);
 
-    effects.timer.forEach(({ key, time, onTick }) => {
-      const isNewTimer = !(key in timers);
+    timer.forEach(function ({ key, time, onTick }) {
+      const isNewTimer = !(key in currentTimers);
       if (isNewTimer) {
-        (function loop() {
-          if (typeof time == 'number' && typeof onTick == 'function') {
-            setTimeout(onTick, time * 1000);
-            timers[key] = setTimeout(loop, time * 1000);
-          }
-        })();
+        if (typeof time == 'number' && typeof onTick == 'function') {
+          currentTimers[key] = setTimeout(function () {
+            delete currentTimers[key];
+            onTick();
+          }, time * 1000);
+        }
       }
     });
   };

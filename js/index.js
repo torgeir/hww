@@ -5,12 +5,18 @@ import render from './services/render';
 import fetch from './services/fetch';
 import watch from './services/watch';
 import timer from './services/timer';
+import keys from './services/keys';
 
-import App from './app';
+import debuggable from './ui/debuggable';
+import app from './ui/app';
 
-run(App, [
-  render(),
-  fetch(),
-  watch(),
-  timer()
-]);
+run(
+  debuggable(app),
+  [
+    render(),
+    fetch(),
+    watch(),
+    timer(),
+    keys()
+  ]
+);
