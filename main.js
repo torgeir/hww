@@ -14,7 +14,7 @@ function createWindow () {
       webSecurity: false
     }
   });
-  if (process.env.NODE_ENV == 'development') {
+  if (process.env.HWW_MODE == 'dev') {
     mainWindow.loadURL('http://localhost:3001');
     mainWindow.webContents.openDevTools();
   }
