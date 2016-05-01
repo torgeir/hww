@@ -42,7 +42,7 @@ const express = require('express');
 const expressSession = require('express-session');
 
 const router = express.Router();
-router.get(/.*/, express.static("dist"));
+router.get(/.*/, express.static(__dirname + "/dist"));
 
 const web = express();
 web.set('views', __dirname + "/views");
