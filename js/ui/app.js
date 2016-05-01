@@ -2,21 +2,12 @@ const nativeImage = nodeRequire('electron').nativeImage; // eslint-disable-line
 
 import { fromJS } from 'immutable';
 
+import styles from './app.css';
+import Settings from './settings';
 import Icon from '../components/icon';
 import Image from '../components/image';
-import Settings from './settings';
 
-const {
-  INIT,
-  PLAY,
-  PAUSE,
-  RAND,
-  RESET,
-  FILES_ADDED,
-  SETTINGS_ACTION,
-  TOGGLE_SETTINGS,
-  SHOW_INSTA
-} = require('../actions');
+const { INIT, PLAY, PAUSE, RAND, RESET, FILES_ADDED, SETTINGS_ACTION, TOGGLE_SETTINGS, SHOW_INSTA } = require('../actions');
 
 const initialState = fromJS({
   imagesBeforeInsta: 3,
@@ -98,133 +89,94 @@ const update = function (state = initialState, action) {
 
 const declare = function (dispatch, state) {
   const currentImage = state.get('currentImage');
-
+  const isCurrentImageInstagram = (currentImage == 'insta');
   const imagesBeforeInsta = state.get('imagesBeforeInsta');
-  const showInstagram = currentImage == 'insta';
-
-  const paused = state.get('paused');
-
-  const images = state.get('images');
-  const src = images.get(currentImage);
 
   const queue = state.get('queue');
+  const images = state.get('images');
+  const isPaused = state.get('paused');
+  const src = images.get(currentImage);
 
   const settings = state.get('settings');
   const folder = settings.getIn(['folder', 'text']);
   const hashtag = settings.getIn(['hashtag', 'text']).replace('#', '');
+  const isFolderNotSet = (folder == null);
+  const isSettingsVisible = settings.get('visible');
+
+  const settingsDispatch = (type, data) => dispatch(SETTINGS_ACTION, { action: { type, ...data } });
+  const settingsEffects = isSettingsVisible ? Settings.declare(settingsDispatch, settings) : {};
+  const dispatchToggleSettings = () => dispatch(SETTINGS_ACTION, { action: { type: TOGGLE_SETTINGS } });
+  const settingsPanel = <div className={ styles.settings }>
+    <a className={ styles.cog }
+       onClick={ dispatchToggleSettings } >
+      <Icon size="32" name="cog" color="#fefefe" />
+    </a>
+    { settingsEffects.view }
+  </div>;
 
   const dispatchShowNextImage = () => dispatch((imagesBeforeInsta == 0) ? SHOW_INSTA : RAND);
 
-  const settingsDispatch = (type, data) => dispatch(SETTINGS_ACTION, { action: { type, ...data } });
-  const settingsEffects = settings.get('visible') ? Settings.declare(settingsDispatch, settings) : null;
-
-  const onShowSettings = () => dispatch(SETTINGS_ACTION, { action: { type: TOGGLE_SETTINGS } });
-
-  const settingsStyles = {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    zIndex: 1
-  };
-
-  const cogStyles = {
-    position: 'absolute',
-    top: '1rem',
-    right: '1rem',
-    cursor: 'pointer'
-  };
-
-  const settingsPanel = <div style={ settingsStyles }>
-    <a className="settingsCog"
-       onClick={ onShowSettings }
-       style={ cogStyles }>
-      <Icon size="32"
-            name="cog"
-            color="#fefefe" />
-    </a>
-    { settingsEffects && settingsEffects.view }
-  </div>;
-
   const nextImageTimer = {
     key: 'next-image-timer',
-    time: showInstagram ? settings.getIn(['instaTimer', 'text']) : settings.getIn(['imageTimer', 'text']),
-    onTick: () => dispatchShowNextImage()
+    onTick: () => dispatchShowNextImage(),
+    time: settings.getIn([isCurrentImageInstagram ? 'instaTimer' : 'imageTimer', 'text'])
   };
 
-  return {
-
-    view: function () {
-      if (!showInstagram && !src) {
-        return <div>
-          { settingsPanel }
-          <span>No image</span>
-        </div>;
-      }
-
-      const appStyles = {
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center'
-      };
-
-      const displayStyles = {
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '100%',
-        height: '100%'
-      };
-
-      const iframeStyles = {
-        display: showInstagram ? 'block' : 'none',
-        width: '100%',
-        border: 0,
-        flex: 1
-      };
-
-      const imageStyles = {
-        display: showInstagram ? 'none' : 'block'
-      };
-
-      return <div style={ appStyles }>
+  const view = function () {
+    if (!isCurrentImageInstagram && !src) {
+      return <div className={ styles.app }>
         { settingsPanel }
-        <div style={ displayStyles }>
+        <div className={ styles.display }>No images found in folder { folder }</div>
+      </div>;
+    }
+
+    const iframeStyles = {
+      display: isCurrentImageInstagram ? 'block' : 'none',
+      width: '100%',
+      border: 0,
+      flex: 1
+    };
+
+    const imageStyles = {
+      display: isCurrentImageInstagram ? 'none' : 'block'
+    };
+
+    return <div className={ styles.app }>
+        { settingsPanel }
+        <div className={ styles.display }>
           <iframe style={ iframeStyles } src={ `http://swanscreen.com/show.php?tag=${hashtag}` } />
           <Image style={ imageStyles } src={ src } />
         </div>
-      </div>;
-    },
+    </div>;
+  };
 
-    keys: Object.assign({}, {
-      'backspace': () => onShowSettings(),
-      'space': () => dispatch(paused ? PLAY : PAUSE),
-      'enter': () => dispatchShowNextImage()
-    }, settingsEffects && settingsEffects.keys),
+  const keys = [{
+    'cmd ,': () => dispatchToggleSettings(),
+    'enter': () => dispatchShowNextImage(),
+    'space': () => dispatch(isPaused ? PLAY : PAUSE)
+  }].concat(settingsEffects.keys || []);
 
-    timer: (paused || folder == null || (images.count() == 0 && queue.count() == 0))
-      ? []
-      : [nextImageTimer],
+  const isImagesEmpty = (images.count() == 0 && queue.count() == 0);
+  const timer = (isPaused || isFolderNotSet || isImagesEmpty)
+    ? []
+    : [nextImageTimer];
 
-    watch: folder == null
-      ? {}
-      : {
+  const watch = isFolderNotSet
+    ? {}
+    : {
         folder,
         onReset: () => dispatch(RESET),
         onChange: function (files) {
           dispatch(FILES_ADDED, { files });
 
-          if (!showInstagram && !src) {
+          const shouldAutoStart = (!isCurrentImageInstagram && !src);
+          if (shouldAutoStart) {
             dispatch(RAND);
           }
         }
-      }
-  };
+      };
+
+  return { view, keys, timer, watch };
 };
+
 export default { update, declare };

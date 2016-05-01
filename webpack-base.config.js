@@ -2,7 +2,6 @@ var path = require('path');
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var autoprefixer = require('autoprefixer');
-console.log(__dirname);
 
 module.exports = {
 
@@ -13,7 +12,7 @@ module.exports = {
   output: {
     path: __dirname + '/dist/',
     filename: './[name].bundle.js',
-    publicPath: ''
+    publicPath: '/'
   },
 
   plugins: [
@@ -50,19 +49,11 @@ module.exports = {
         loader: "url-loader"
       },
       {
-        test: /\.less$/,
-        loaders: [
-          "style-loader",
-          "css-loader",
-          "postcss-loader",
-          "less-loader?strictMath&cleancss"
-        ]
-      },
-      {
         test: /\.css$/,
         loaders: [
-          "style-loader",
-          "css-loader"
+          "style-loader?sourceMap",
+          "css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]",
+          "postcss-loader"
         ]
       },
       {
@@ -70,6 +61,8 @@ module.exports = {
         loader: "json-loader"
       }
     ]
-  }
+  },
+
+  postcss: [ autoprefixer ],
 
 };

@@ -1,18 +1,14 @@
 import { fromJS } from 'immutable';
 
 import { field, updateField } from '../fields';
+import styles from './settings.css';
 
-const {
-  TOGGLE_SETTINGS,
-  FIELD_SAVE,
-  FIELD_CHANGE,
-  FIELD_RESET
-} = require('../actions');
+const { TOGGLE_SETTINGS, FIELD_SAVE, FIELD_CHANGE, FIELD_RESET } = require('../actions');
 
 const initialState = fromJS({
   visible: false,
   instaTimer: field(10),
-  imageTimer: field(2),
+  imageTimer: field(5),
   folder: field('/Users/torgeir/Desktop/hww-bilder'),
   hashtag: field('#trondheim')
 });
@@ -51,88 +47,45 @@ const declare = (dispatch, state) => {
     dispatch(TOGGLE_SETTINGS);
   };
 
-
-  const settingsStyles = {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%',
-    color: '#fefefe',
-    fontSize: '2rem',
-    backgroundColor: 'rgba(0, 0, 0, 0.8)'
-  };
-
-  const pStyles = {
-    fontFamily: 'Helvetica',
-    fontSize: '2rem',
-    padding: '1rem',
-    marginBottom: '0rem',
-    width: '100%',
-    boxSizing: 'border-box'
-  };
-
-  const inputStyles = {
-    fontFamily: 'Helvetica',
-    fontSize: '2rem',
-    width: '100%',
-    marginTop: '0.5rem',
-    padding: '0.5rem 1rem',
-    boxSizing: 'border-box'
-  };
-
-  const buttonStyles = {
-    fontSize: '2rem'
-  };
-
   const fields = ['folder', 'instaTimer', 'imageTimer', 'hashtag'];
   const saveFields = onFieldSave(...fields);
   const resetFields = onFieldReset(...fields);
-  const handleKeys = function ({ keyCode }) {
-    switch (keyCode) {
-    case 13:
-      return saveFields();
-    case 27:
-      return resetFields();
-    default:
-      return false;
-    }
-  };
 
-  const view = <div style={ settingsStyles }>
+  const view = <div className={ styles.settings }>
+    <h2>Settings</h2>
 
-    <label style={ pStyles }>Folder to watch for images in
-    <input style={ inputStyles }
+    <label className={ styles.p }>Folder to watch for images in
+    <input className={ `${styles.input} with-hotkeys` }
            placeholder="Image folder"
            value={ state.getIn(['folder', 'value']) }
-           onKeyDown={ handleKeys }
            onChange={ onFieldChange('folder') } /></label>
 
-    <label style={ pStyles }>Seconds to spend on each image
-    <input style={ inputStyles }
-           placeholder="Image-timer"
+    <label className={ styles.p }>Seconds to spend on each image in the folder
+    <input className={ `${styles.input} with-hotkeys` }
+           placeholder="Image-timer (seconds)"
            value={ state.getIn(['imageTimer', 'value']) }
-           onKeyDown={ handleKeys }
            onChange={ onFieldChange('imageTimer') } /></label>
 
-    <label style={ pStyles }>Seconds to spend showing instagram/twitter
-    <input style={ inputStyles }
-           placeholder="Insta-timer"
+    <label className={ styles.p }>Seconds to spend showing instagram/twitter from swanscreen
+    <input className={ `${styles.input} with-hotkeys` }
+           placeholder="Insta-timer (seconds)"
            value={ state.getIn(['instaTimer', 'value']) }
-           onKeyDown={ handleKeys }
            onChange={ onFieldChange('instaTimer') } /></label>
 
-    <label style={ pStyles }>Hashtag to show instagram/twitter
-    <input style={ inputStyles }
+    <label className={ styles.p }>Hashtag to show instagram/twitter
+    <input className={ `${styles.input} with-hotkeys` }
            placeholder="Hashtag"
            value={ state.getIn(['hashtag', 'value']) }
-           onKeyDown={ handleKeys }
            onChange={ onFieldChange('hashtag') } /></label>
 
-      <button style={ buttonStyles }
-              onClick={ saveFields }>Save</button>
+    <button className={ styles.button }
+            onClick={ saveFields }>Save</button>
   </div>;
-  const keys = { 'esc': () => resetFields() };
+
+  const keys = [{
+    'enter': () => saveFields(),
+    'esc': () => resetFields()
+  }];
 
   return { view, keys };
 };
