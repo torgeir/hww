@@ -4,10 +4,12 @@
   "description": "holsen webjorns wedding",
   "main": "main.js",
   "scripts": {
-    "start": "electron main.js",
+    "start": "NODE_ENV=development electron main.js",
+    "start:prod": "NODE_ENV=production electron main.js",
     "build": "webpack --config webpack-dev.config.js",
     "build:prod": "webpack --config webpack-prod.config.js --prod",
-    "build:watch": "node webpack-dev-server.js"
+    "build:watch": "node webpack-dev-server.js",
+    "build-app": "electron-packager . Hww --platform=darwin --arch=x64 --overwrite"
   },
   "repository": {
     "type": "git",
@@ -46,6 +48,7 @@
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-react": "^6.3.13",
     "css-loader": "^0.23.0",
+    "electron-packager": "^7.0.1",
     "electron-prebuilt": "^0.37.0",
     "eslint": "^2.7.0",
     "eslint-loader": "^1.3.0",

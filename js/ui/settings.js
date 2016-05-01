@@ -63,10 +63,22 @@ const declare = (dispatch, state) => {
     backgroundColor: 'rgba(0, 0, 0, 0.8)'
   };
 
+  const pStyles = {
+    fontFamily: 'Helvetica',
+    fontSize: '2rem',
+    padding: '1rem',
+    marginBottom: '0rem',
+    width: '100%',
+    boxSizing: 'border-box'
+  };
+
   const inputStyles = {
+    fontFamily: 'Helvetica',
     fontSize: '2rem',
     width: '100%',
-    padding: '0.5rem'
+    marginTop: '0.5rem',
+    padding: '0.5rem 1rem',
+    boxSizing: 'border-box'
   };
 
   const buttonStyles = {
@@ -89,40 +101,37 @@ const declare = (dispatch, state) => {
 
   const view = <div style={ settingsStyles }>
 
-    <p>Folder to watch for images in</p>
+    <label style={ pStyles }>Folder to watch for images in
     <input style={ inputStyles }
            placeholder="Image folder"
            value={ state.getIn(['folder', 'value']) }
            onKeyDown={ handleKeys }
-           onChange={ onFieldChange('folder') } />
+           onChange={ onFieldChange('folder') } /></label>
 
-    <p>Seconds to spend on each image</p>
+    <label style={ pStyles }>Seconds to spend on each image
     <input style={ inputStyles }
            placeholder="Image-timer"
            value={ state.getIn(['imageTimer', 'value']) }
            onKeyDown={ handleKeys }
-           onChange={ onFieldChange('imageTimer') } />
+           onChange={ onFieldChange('imageTimer') } /></label>
 
-    <p>Seconds to spend showing instagram/twitter</p>
+    <label style={ pStyles }>Seconds to spend showing instagram/twitter
     <input style={ inputStyles }
            placeholder="Insta-timer"
            value={ state.getIn(['instaTimer', 'value']) }
            onKeyDown={ handleKeys }
-           onChange={ onFieldChange('instaTimer') } />
+           onChange={ onFieldChange('instaTimer') } /></label>
 
-    <p>Hashtag to show instagram/twitter</p>
+    <label style={ pStyles }>Hashtag to show instagram/twitter
     <input style={ inputStyles }
            placeholder="Hashtag"
            value={ state.getIn(['hashtag', 'value']) }
            onKeyDown={ handleKeys }
-           onChange={ onFieldChange('hashtag') } />
+           onChange={ onFieldChange('hashtag') } /></label>
 
-    <p>
       <button style={ buttonStyles }
-              onClick={ saveFields }>Ok</button>
-    </p>
+              onClick={ saveFields }>Save</button>
   </div>;
-
   const keys = { 'esc': () => resetFields() };
 
   return { view, keys };

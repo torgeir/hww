@@ -14,8 +14,13 @@ function createWindow () {
       webSecurity: false
     }
   });
-  mainWindow.loadURL('http://localhost:3001');
-  mainWindow.webContents.openDevTools();
+  if (process.env.NODE_ENV == 'development') {
+    mainWindow.loadURL('http://localhost:3001');
+    mainWindow.webContents.openDevTools();
+  }
+  else {
+    mainWindow.loadURL('http://localhost:3000');
+  }
   mainWindow.on('closed', function () {
     mainWindow = null;
   });
@@ -37,9 +42,7 @@ const express = require('express');
 const expressSession = require('express-session');
 
 const router = express.Router();
-// router.get('/', function (req, res) {
-//   return res.sendFile(__dirname + "/dist/index.html");
-// });
+router.get(/.*/, express.static("dist"));
 
 const web = express();
 web.set('views', __dirname + "/views");
