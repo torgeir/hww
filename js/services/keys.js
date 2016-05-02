@@ -121,7 +121,6 @@ const keys = function () {
   });
 
   let listeners;
-  let runThrottled;
 
   return function (effects) {
     const { keys } = effects;
