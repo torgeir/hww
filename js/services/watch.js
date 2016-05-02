@@ -35,8 +35,7 @@ const watch = function () {
 
       const triggerOnChange = function (files) {
         const images = files.filter(isImage);
-        const localImages = images.map(image => `file://${image}`);
-        onChange(localImages);
+        onChange(images);
       };
 
       fs.readdir(folder, function (err, files) {

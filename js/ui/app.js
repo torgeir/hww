@@ -145,7 +145,9 @@ const declare = function (dispatch, state) {
         { settingsPanel }
         <div className={ styles.display }>
           <iframe style={ iframeStyles } src={ `http://swanscreen.com/show.php?tag=${hashtag}` } />
-          <Image style={ imageStyles } src={ src } />
+          { !isCurrentImageInstagram
+              ? <Image style={ imageStyles } src={ `http://localhost:3000/images/${src}` } />
+              : null }
         </div>
     </div>;
   };

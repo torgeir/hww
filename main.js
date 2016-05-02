@@ -1,8 +1,7 @@
 'use strict';
 
 const electron = require('electron');
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
+const { app, BrowserWindow } = electron;
 
 let mainWindow;
 function createWindow () {
@@ -11,7 +10,7 @@ function createWindow () {
     height: 600,
     webPreferences: {
       nodeIntegration: true,
-      webSecurity: false
+      webSecurity: true
     }
   });
   if (process.env.HWW_MODE == 'dev') {
@@ -37,11 +36,18 @@ app.on('activate', function () {
   }
 });
 
-
 const express = require('express');
 const expressSession = require('express-session');
 
 const router = express.Router();
+router.get(/\/images\/(.*)/, function (req, res) {
+  const path = req.params[0];
+  if (!path) {
+    return res.status(500).send('no path given?');
+  }
+
+  res.sendFile(path);
+});
 router.get(/.*/, express.static(__dirname + "/dist"));
 
 const web = express();
@@ -49,4 +55,4 @@ web.set('views', __dirname + "/views");
 web.set('view engine', 'jade');
 web.use(expressSession({ resave: false, saveUninitialized: false, secret: 'holsbjornswedding' }));
 web.use('/', router);
-web.listen(3000);
+web.listen(3000, 'localhost');
