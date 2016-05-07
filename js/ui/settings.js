@@ -82,30 +82,46 @@ const declare = (dispatch, state) => {
   const saveFields = onFieldSave(...fields);
   const resetFields = onFieldReset(...fields);
 
+  const onKeyDown = function ({ keyCode }) {
+    if (keyCode == 13) { saveFields();  }
+    if (keyCode == 27) { resetFields(); }
+  };
+
   const view = <div className={ styles.settings }>
     <h2>Settings</h2>
 
     <label className={ styles.p }>Folder to watch for images in
-    <input className={ `${styles.input} with-hotkeys` }
+    <input className={ `${styles.input}` }
            placeholder="Image folder"
+           onKeyDown={ onKeyDown }
            value={ state.getIn(['folder', 'value']) }
            onChange={ onFieldChange('folder') } /></label>
 
     <label className={ styles.p }>Seconds to spend on each image in the folder
-    <input className={ `${styles.input} with-hotkeys` }
+    <input className={ `${styles.input}` }
            placeholder="Image-timer (seconds)"
+           onKeyDown={ onKeyDown }
            value={ state.getIn(['imageTimer', 'value']) }
            onChange={ onFieldChange('imageTimer') } /></label>
 
     <label className={ styles.p }>Seconds to spend showing instagram/twitter from swanscreen
-    <input className={ `${styles.input} with-hotkeys` }
+    <input className={ `${styles.input}` }
            placeholder="Insta-timer (seconds)"
+           onKeyDown={ onKeyDown }
            value={ state.getIn(['instaTimer', 'value']) }
            onChange={ onFieldChange('instaTimer') } /></label>
 
+    <label className={ styles.p }>Number of images between showing instagram
+    <input className={ `${styles.input}` }
+           placeholder="images between insta"
+           onKeyDown={ onKeyDown }
+           value={ state.getIn(['imagesBeforeInsta', 'value']) }
+           onChange={ onFieldChange('imagesBeforeInsta') } /></label>
+
     <label className={ styles.p }>Hashtag to show instagram/twitter
-    <input className={ `${styles.input} with-hotkeys` }
+    <input className={ `${styles.input}` }
            placeholder="Hashtag"
+           onKeyDown={ onKeyDown }
            value={ state.getIn(['hashtag', 'value']) }
            onChange={ onFieldChange('hashtag') } /></label>
 
