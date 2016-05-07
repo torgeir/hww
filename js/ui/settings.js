@@ -34,7 +34,7 @@ const initialState = fromJS({
   folder: field('/Users/torgeir/Desktop/hww-bilder'),
   hashtag: field('#trondheim')
 }).merge(
-  pick(['visible', 'instaTimer', 'imageTimer', 'imagesBeforeInsta', 'folder', 'hashtag'],
+  pick(['instaTimer', 'imageTimer', 'imagesBeforeInsta', 'folder', 'hashtag'],
        settingsFromLocalStorage));
 
 const update = (state = initialState, action = {}) => {
@@ -83,7 +83,7 @@ const declare = (dispatch, state) => {
   const resetFields = onFieldReset(...fields);
 
   const onKeyDown = function ({ keyCode }) {
-    if (keyCode == 13) { saveFields();  }
+    if (keyCode == 13) { saveFields(); }
     if (keyCode == 27) { resetFields(); }
   };
 
