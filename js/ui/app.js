@@ -9,13 +9,15 @@ import Image from '../components/image';
 
 const { INIT, PLAY, PAUSE, RAND, RESET, FILES_ADDED, SETTINGS_ACTION, TOGGLE_SETTINGS, SHOW_INSTA } = require('../actions');
 
+const initialSettings = Settings.update();
+
 const initialState = fromJS({
-  imagesBeforeInsta: 3,
+  imagesBeforeInsta: initialSettings.getIn(['imagesBeforeInsta', 'value']),
   images: [],
   queue: [],
   currentImage: null,
   paused: false,
-  settings: Settings.update()
+  settings: initialSettings
 });
 
 const update = function (state = initialState, action) {
@@ -38,13 +40,13 @@ const update = function (state = initialState, action) {
       images: [],
       queue: [],
       currentImage: null,
-      imagesBeforeInsta: initialState.get('imagesBeforeInsta')
+      imagesBeforeInsta: state.getIn(['settings', 'imagesBeforeInsta', 'value'])
     });
 
   case SHOW_INSTA:
     return state.merge({
       currentImage: 'insta',
-      imagesBeforeInsta: initialState.get('imagesBeforeInsta') + 1
+      imagesBeforeInsta: state.getIn(['settings', 'imagesBeforeInsta', 'value']) + 1
     });
 
   case RAND: {
@@ -52,6 +54,7 @@ const update = function (state = initialState, action) {
 
     const queue = state.get('queue');
     const queuedImage = queue.first();
+    const imagesBeforeInsta = state.get('imagesBeforeInsta') - 1;
     if (queuedImage) {
       const updatedImages = images.push(queuedImage);
       const currentImage = updatedImages.count() - 1;
@@ -59,7 +62,7 @@ const update = function (state = initialState, action) {
         images: updatedImages,
         queue: queue.skip(1),
         currentImage,
-        imagesBeforeInsta: state.get('imagesBeforeInsta') - 1
+        imagesBeforeInsta
       });
     }
 
@@ -72,7 +75,6 @@ const update = function (state = initialState, action) {
       return num;
     };
 
-    const imagesBeforeInsta = state.get('imagesBeforeInsta') - 1;
     return state.merge({
       currentImage: randUntil((n) => n != state.get('currentImage')),
       imagesBeforeInsta
@@ -114,7 +116,7 @@ const declare = function (dispatch, state) {
     { settingsEffects.view }
   </div>;
 
-  const dispatchShowNextImage = () => dispatch((imagesBeforeInsta == 0) ? SHOW_INSTA : RAND);
+  const dispatchShowNextImage = () => dispatch((imagesBeforeInsta <= 1) ? SHOW_INSTA : RAND);
 
   const nextImageTimer = {
     key: 'next-image-timer',
@@ -178,7 +180,9 @@ const declare = function (dispatch, state) {
         }
       };
 
-  return { view, keys, timer, watch };
+  const save = settingsEffects.save;
+
+  return { view, keys, timer, watch, save };
 };
 
 export default { update, declare };
