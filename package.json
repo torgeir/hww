@@ -8,7 +8,7 @@
     "build:watch": "node webpack-dev-server.js",
     "start": "HWW_MODE=dev electron main.js",
     "build:prod": "webpack --config webpack-prod.config.js --prod",
-    "start:prod": "npm run build:prod && electron main.js",
+    "start:prod": "electron main.js",
     "package": "npm run build:prod && electron-packager . Hww --platform=darwin --arch=x64 --overwrite --prune"
   },
   "repository": {
