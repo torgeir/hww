@@ -9,6 +9,7 @@ const actions = [
   'RESET',
   'FILES_ADDED',
 
+  'SAVE_SETTINGS',
   'TOGGLE_SETTINGS',
   'SETTINGS_ACTION',
   'FIELD_SAVE',

@@ -3,21 +3,51 @@ import { fromJS } from 'immutable';
 import { field, updateField } from '../fields';
 import styles from './settings.css';
 
-const { TOGGLE_SETTINGS, FIELD_SAVE, FIELD_CHANGE, FIELD_RESET } = require('../actions');
+const { SAVE_SETTINGS, TOGGLE_SETTINGS, FIELD_SAVE, FIELD_CHANGE, FIELD_RESET } = require('../actions');
+
+const SETTINGS_KEY = 'hww-settings';
+
+const settingsFromLocalStorage = (function () {
+  try {
+    return JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
+  }
+  catch (e) {
+    return {};
+  }
+})();
+
+const pick = function (keys, state) {
+  return keys.reduce(function (acc, key) {
+    if (key in state) {
+      acc[key] = state[key];
+    }
+    return acc;
+  }, {});
+};
 
 const initialState = fromJS({
+  shouldSave: false,
   visible: false,
   instaTimer: field(10),
   imageTimer: field(5),
+  imagesBeforeInsta: field(3),
   folder: field('/Users/torgeir/Desktop/hww-bilder'),
   hashtag: field('#trondheim')
-});
+}).merge(
+  pick(['visible', 'instaTimer', 'imageTimer', 'imagesBeforeInsta', 'folder', 'hashtag'],
+       settingsFromLocalStorage));
 
 const update = (state = initialState, action = {}) => {
   switch (action.type) {
 
   case TOGGLE_SETTINGS:
-    return state.update('visible', (visible) => !visible);
+    return state.merge({
+      visible: !state.get('visible'),
+      shouldSave: false
+    });
+
+  case SAVE_SETTINGS:
+    return state.set('shouldSave', true);
 
   case FIELD_CHANGE:
   case FIELD_SAVE:
@@ -39,6 +69,7 @@ const declare = (dispatch, state) => {
 
   const onFieldSave = (...fields) => () => {
     fields.forEach(field => dispatch(FIELD_SAVE, { field }));
+    dispatch(SAVE_SETTINGS);
     dispatch(TOGGLE_SETTINGS);
   };
 
@@ -87,7 +118,11 @@ const declare = (dispatch, state) => {
     'esc': () => resetFields()
   }];
 
-  return { view, keys };
+  const save = state.get('shouldSave')
+        ? [{ key: SETTINGS_KEY, state }]
+        : [];
+
+  return { view, keys, save };
 };
 
 export default { update, declare };
