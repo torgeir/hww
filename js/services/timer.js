@@ -1,4 +1,4 @@
-const timer = () => {
+const timer = function () {
 
   const currentTimers = {};
 

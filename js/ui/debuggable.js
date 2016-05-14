@@ -9,7 +9,6 @@ export default function debuggable (Component) {
       console.log('dispatching', type, data); // eslint-disable-line
       return dispatch(type, data);
     };
-    // console.log('state', JSON.stringify(state.toJS(), null, 2)); // eslint-disable-line
     return Component.declare(loggingDispatch, state);
   };
 

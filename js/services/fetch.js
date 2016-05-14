@@ -1,4 +1,3 @@
-
 const fetch = function () {
 
   let pending = [];
@@ -8,6 +7,7 @@ const fetch = function () {
     const staleHttpRequests = Object.keys(pending)
       .map(key => pending[key])
       .filter((req) => http.filter(r => r.key == req.key).length == 0);
+
     staleHttpRequests.forEach((req) =>
       // req.abort();
       console.log(`request ${req.key} is no longer pending and could be aborted`)); // eslint-disable-line
@@ -20,29 +20,28 @@ const fetch = function () {
     }, {});
 
     newRequests.forEach(function (req) {
-      const { key } = req;
+      const { key, url } = req;
 
       const stillPending = () => key in pending;
 
-      setTimeout(function () {
-        const success = true;
-        if (success) {
+      window.fetch(url)
+        .then(res => res.json())
+        .then(function (json) {
           if (!stillPending()) {
             return;
           }
 
           delete pending[key];
-          req.success(Math.random());
-        }
-        else {
+          req.success(json);
+        })
+        .catch(function (err) {
           if (!stillPending()) {
             return;
           }
 
           delete pending[key];
-          req.error('errored');
-        }
-      }, 2000);
+          req.error(err);
+        });
     });
   };
 };

@@ -37,7 +37,7 @@ const initialState = fromJS({
   pick(['instaTimer', 'imageTimer', 'imagesBeforeInsta', 'folder', 'hashtag'],
        settingsFromLocalStorage));
 
-const update = (state = initialState, action = {}) => {
+const update = function (state = initialState, action = {}) {
   switch (action.type) {
 
   case TOGGLE_SETTINGS:
@@ -59,7 +59,7 @@ const update = (state = initialState, action = {}) => {
   }
 };
 
-const declare = (dispatch, state) => {
+const declare = function (dispatch, state) {
 
   const onFieldChange = (field) => ({ target: { value } }) =>
     dispatch(FIELD_CHANGE, {

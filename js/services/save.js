@@ -1,4 +1,3 @@
-
 const save = function () {
 
   const previousStates = {};

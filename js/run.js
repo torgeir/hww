@@ -1,5 +1,6 @@
 const { INIT } = require('./actions');
 
+/* inspired by https://github.com/ccorcos/elmish */
 export default function run (Component, services = []) {
 
   let isThrottled = false;

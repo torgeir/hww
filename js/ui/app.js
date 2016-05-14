@@ -1,5 +1,3 @@
-const nativeImage = nodeRequire('electron').nativeImage; // eslint-disable-line
-
 import { fromJS } from 'immutable';
 
 import styles from './app.css';
