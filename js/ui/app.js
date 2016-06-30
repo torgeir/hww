@@ -106,13 +106,15 @@ const declare = function (dispatch, state) {
   const settingsDispatch = (type, data) => dispatch(SETTINGS_ACTION, { action: { type, ...data } });
   const settingsEffects = isSettingsVisible ? Settings.declare(settingsDispatch, settings) : {};
   const dispatchToggleSettings = () => dispatch(SETTINGS_ACTION, { action: { type: TOGGLE_SETTINGS } });
-  const settingsPanel = <div className={ styles.settings }>
-    <a className={ styles.cog }
-       onClick={ dispatchToggleSettings } >
-      <Icon size="32" name="cog" color="#fefefe" />
-    </a>
-    { settingsEffects.view }
-  </div>;
+  const settingsPanel = !isCurrentImageInstagram
+    ? <div className={ styles.settings }>
+        <a className={ styles.cog }
+          onClick={ dispatchToggleSettings } >
+          <Icon size="32" name="cog" color="#fefefe" />
+        </a>
+        { settingsEffects.view }
+      </div>
+    : null;
 
   const dispatchShowNextImage = () => dispatch((imagesBeforeInsta <= 1) ? SHOW_INSTA : RAND);
 
