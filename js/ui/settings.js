@@ -32,7 +32,7 @@ const initialState = fromJS({
   imageTimer: field(5),
   imagesBeforeInsta: field(3),
   folder: field('/Users/torgeir/Desktop/hww-bilder'),
-  hashtag: field('#trondheim')
+  hashtag: field('https://instashow.tv/show/2818/atplusse?th=FPXgqX2SfR16')
 }).merge(
   pick(['instaTimer', 'imageTimer', 'imagesBeforeInsta', 'folder', 'hashtag'],
        settingsFromLocalStorage));
@@ -104,23 +104,23 @@ const declare = function (dispatch, state) {
            value={ state.getIn(['imageTimer', 'value']) }
            onChange={ onFieldChange('imageTimer') } /></label>
 
-    <label className={ styles.p }>Seconds to spend showing instagram/twitter from swanscreen
+    <label className={ styles.p }>Seconds to spend showing iframe with external url
     <input className={ `${styles.input}` }
-           placeholder="Insta-timer (seconds)"
+           placeholder="iframe-timer (seconds)"
            onKeyDown={ onKeyDown }
            value={ state.getIn(['instaTimer', 'value']) }
            onChange={ onFieldChange('instaTimer') } /></label>
 
-    <label className={ styles.p }>Number of images between showing instagram
+    <label className={ styles.p }>Number of images between showing external url
     <input className={ `${styles.input}` }
            placeholder="images between insta"
            onKeyDown={ onKeyDown }
            value={ state.getIn(['imagesBeforeInsta', 'value']) }
            onChange={ onFieldChange('imagesBeforeInsta') } /></label>
 
-    <label className={ styles.p }>Hashtag to show instagram/twitter
+    <label className={ styles.p }>External url to show
     <input className={ `${styles.input}` }
-           placeholder="Hashtag"
+           placeholder="External url for iframe"
            onKeyDown={ onKeyDown }
            value={ state.getIn(['hashtag', 'value']) }
            onChange={ onFieldChange('hashtag') } /></label>
